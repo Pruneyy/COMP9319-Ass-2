@@ -36,10 +36,8 @@ Bits newBits(int nbits)
 
 void freeBits(Bits b)
 {
-    free(b->bitstring);
+    //free(b->bitstring);
     free(b);
-	//TODO
-	//Done
 }
 
 // check if the bit at position is 1
@@ -48,8 +46,13 @@ Bool bitIsSet(Bits b, int position)
 {
 	assert(b != NULL);
 	assert(0 <= position && position < b->nbits);
-	//TODO
-	return FALSE; // remove this
+	
+	if (b->bitstring[position/8] & (1 << (position%8))) {
+	    return 1;
+    }
+    else {
+        return 0;
+    }
 }
 
 // check whether one Bits b1 is a subset of Bits b2
