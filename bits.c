@@ -10,7 +10,7 @@
 #include "defs.h"
 #include "bits.h"
 #include "page.h"
-
+//Look dad a change
 typedef struct _BitsRep {
 	Count  nbits;		  // how many bits
 	Count  nbytes;		  // how many bytes in array
