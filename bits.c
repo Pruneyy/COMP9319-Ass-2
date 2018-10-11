@@ -12,6 +12,7 @@
 #include "page.h"
 //Look dad a change
 //Good work son
+//Thanks Papa
 typedef struct _BitsRep {
 	Count  nbits;		  // how many bits
 	Count  nbytes;		  // how many bytes in array
