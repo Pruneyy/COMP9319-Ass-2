@@ -36,7 +36,10 @@ Bits newBits(int nbits)
 
 void freeBits(Bits b)
 {
+    free(b->bitstring);
+    free(b);
 	//TODO
+	//Done
 }
 
 // check if the bit at position is 1
