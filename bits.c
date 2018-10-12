@@ -56,13 +56,22 @@ Bool bitIsSet(Bits b, int position)
 }
 
 // check whether one Bits b1 is a subset of Bits b2
-
+// B1 is a subset of B2 if ALL elements of B1 are also in B2
 Bool isSubset(Bits b1, Bits b2)
 {
+    int i = 0;
 	assert(b1 != NULL && b2 != NULL);
 	assert(b1->nbytes == b2->nbytes);
-	//TODO
-	return FALSE; // remove this
+	for (i = 0; i < b1->nbits; i++) {
+	    // If B1 bit is active && the same B2 bit is active, then continue, else return false
+	    if (bitIsSet(b1, i) && bitIsSet(b2, i)) {
+	        continue;
+        } else {
+            return 0;
+        }
+    }
+    return 1;
+	        
 }
 
 // set the bit at position to 1
@@ -71,15 +80,18 @@ void setBit(Bits b, int position)
 {
 	assert(b != NULL);
 	assert(0 <= position && position < b->nbits);
-	//TODO
+	b->bitstring[position/8] |= (1 << (position%8));
 }
 
 // set all bits to 1
 
 void setAllBits(Bits b)
 {
+    int i = 0;
 	assert(b != NULL);
-	//TODO
+    for (i = 0; i < b->nbits; i++) {
+        setBit(b, i);
+    }
 }
 
 // set the bit at position to 0
@@ -88,33 +100,48 @@ void unsetBit(Bits b, int position)
 {
 	assert(b != NULL);
 	assert(0 <= position && position < b->nbits);
-	//TODO
+	b->bitstring[position/8] &= ~(1 << (position%8));
 }
 
 // set all bits to 0
 
 void unsetAllBits(Bits b)
 {
+    int i = 0;
 	assert(b != NULL);
-	//TODO
+    for (i = 0; i < b->nbits; i++) {
+        unsetBit(b, i);
+    }
 }
 
 // bitwise AND ... b1 = b1 & b2
 
 void andBits(Bits b1, Bits b2)
 {
+    int i = 0;
 	assert(b1 != NULL && b2 != NULL);
 	assert(b1->nbytes == b2->nbytes);
-	//TODO
+    for (i = 0; i < b1->nbits; i++) {
+        if (bitIsSet(b1, i) && bitIsSet(b2, i)) {
+            b1->bitstring[i/8] |= (1 << (i%8));
+        } else {
+            b1->bitstring[i/8] &= ~(1 << (i%8));
+        }
+    }
 }
 
 // bitwise OR ... b1 = b1 | b2
 
 void orBits(Bits b1, Bits b2)
 {
+    int i = 0;
 	assert(b1 != NULL && b2 != NULL);
 	assert(b1->nbytes == b2->nbytes);
-	//TODO
+	for (i = 0; i < b1->nbits; i++) {
+	    if (!(bitIsSet(b1, i) && bitIsSet(b2, i))) {
+	        b1->bitstring[i/8] |= (1 << (i%8));
+        }
+    }
 }
 
 
