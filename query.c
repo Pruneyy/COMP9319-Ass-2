@@ -52,10 +52,18 @@ Query startQuery(Reln r, char *q, char sigs)
 // search for matching tuples and show each
 // accumulate query stats
 
-void scanAndDisplayMatchingTuples(Query q)
+void scanAndDisplayMatchingTuples(Query q) //TODO
 {
 	assert(q != NULL);
-	//TODO
+	// Start by finding active pages
+	// i is essentially the page id
+	int i = 0;
+	for (i = 0; i < nPages(q->rel); i++) {
+	    if (bitIsSet(q->pages, i)) {
+	        //Page p = getPage(dataFile(q->rel), i);
+	        //I think now we get the tuple from the page?
+        }
+    }
 }
 
 // print statistics on query
