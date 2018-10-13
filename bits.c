@@ -10,9 +10,7 @@
 #include "defs.h"
 #include "bits.h"
 #include "page.h"
-//Look dad a change
-//Good work son
-//Thanks Papa
+
 typedef struct _BitsRep {
 	Count  nbits;		  // how many bits
 	Count  nbytes;		  // how many bytes in array
@@ -34,49 +32,43 @@ Bits newBits(int nbits)
 
 // release memory associated with a Bits object
 
-void freeBits(Bits b)
+void freeBits(Bits b) //TODO
 {
-    //free(b->bitstring);
     free(b);
 }
 
 // check if the bit at position is 1
 
-Bool bitIsSet(Bits b, int position)
+Bool bitIsSet(Bits b, int position)//TODO
 {
 	assert(b != NULL);
 	assert(0 <= position && position < b->nbits);
-	
 	if (b->bitstring[position/8] & (1 << (position%8))) {
-	    return 1;
-    }
-    else {
-        return 0;
+	   return TRUE;
+    } else {
+       return FALSE;
     }
 }
 
 // check whether one Bits b1 is a subset of Bits b2
 // B1 is a subset of B2 if ALL elements of B1 are also in B2
-Bool isSubset(Bits b1, Bits b2)
+Bool isSubset(Bits b1, Bits b2)//TODO
 {
     int i = 0;
 	assert(b1 != NULL && b2 != NULL);
 	assert(b1->nbytes == b2->nbytes);
 	for (i = 0; i < b1->nbits; i++) {
-	    // If B1 bit is active && the same B2 bit is active, then continue, else return false
-	    if (bitIsSet(b1, i) && bitIsSet(b2, i)) {
-	        continue;
-        } else {
-            return 0;
+	    // If B1 bit is active && the same B2 bit is NOT active return false, else continue
+	    if (bitIsSet(b1, i) && !bitIsSet(b2, i)){
+            return FALSE;
         }
     }
-    return 1;
-	        
+    return TRUE;
 }
 
 // set the bit at position to 1
 
-void setBit(Bits b, int position)
+void setBit(Bits b, int position)//TODO
 {
 	assert(b != NULL);
 	assert(0 <= position && position < b->nbits);
@@ -85,7 +77,7 @@ void setBit(Bits b, int position)
 
 // set all bits to 1
 
-void setAllBits(Bits b)
+void setAllBits(Bits b)//TODO
 {
     int i = 0;
 	assert(b != NULL);
@@ -96,7 +88,7 @@ void setAllBits(Bits b)
 
 // set the bit at position to 0
 
-void unsetBit(Bits b, int position)
+void unsetBit(Bits b, int position)//TODO
 {
 	assert(b != NULL);
 	assert(0 <= position && position < b->nbits);
@@ -105,7 +97,7 @@ void unsetBit(Bits b, int position)
 
 // set all bits to 0
 
-void unsetAllBits(Bits b)
+void unsetAllBits(Bits b)//TODO
 {
     int i = 0;
 	assert(b != NULL);
@@ -116,7 +108,7 @@ void unsetAllBits(Bits b)
 
 // bitwise AND ... b1 = b1 & b2
 
-void andBits(Bits b1, Bits b2)
+void andBits(Bits b1, Bits b2)//TODO
 {
     int i = 0;
 	assert(b1 != NULL && b2 != NULL);
@@ -132,7 +124,7 @@ void andBits(Bits b1, Bits b2)
 
 // bitwise OR ... b1 = b1 | b2
 
-void orBits(Bits b1, Bits b2)
+void orBits(Bits b1, Bits b2)//TODO
 {
     int i = 0;
 	assert(b1 != NULL && b2 != NULL);
@@ -149,17 +141,25 @@ void orBits(Bits b1, Bits b2)
 // from specified position in Page buffer
 // and place it in a BitsRep structure
 
-void getBits(Page p, Offset pos, Bits b)
+void getBits(Page p, Offset pos, Bits b) //TODO
 {
-	//TODO
+   Byte* start = addrInPage(p, pos, b->nbytes);
+   int i;
+   for (i = 0; i < b->nbytes; i++) {
+      memcpy(&(b->bitstring[i]),&(start[i]),sizeof(Byte));
+   }
 }
 
 // copy the bit-string array in a BitsRep
 // structure to specified position in Page buffer
 
-void putBits(Page p, Offset pos, Bits b)
+void putBits(Page p, Offset pos, Bits b) //TODO
 {
-	//TODO
+	Byte* start = addrInPage(p, pos, b->nbytes);
+   int i;
+   for (i = 0; i < b->nbytes; i++) {
+      memcpy(&(start[i]),&(b->bitstring[i]),sizeof(Byte));
+   }
 }
 
 // show Bits on stdout

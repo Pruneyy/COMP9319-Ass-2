@@ -43,6 +43,15 @@ int main(int argc, char **argv)
 	printf("b: "); 
 	showBits(b); 
 	printf("\n");
+	
+	printf("Put b in page, then retrieve in b2\n");
+	Page p = newPage();
+	putBits(p, 0, b);
+	Bits b2 = newBits(64);
+	getBits(p, 0, b2);
+	printf("b2: "); 
+	showBits(b2); 
+	printf("\n");
 	/*	
 	setBit(b, 5);
 	printf("t=1: "); showBits(b); printf("\n");
