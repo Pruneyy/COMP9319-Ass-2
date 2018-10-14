@@ -52,16 +52,43 @@ Query startQuery(Reln r, char *q, char sigs)
 // search for matching tuples and show each
 // accumulate query stats
 
+/* ===FROM SPEC===
+foreach PID in 0 .. npages-1 {
+    if (PID is not set in MatchingPages)
+        ignore this page
+    for each tuple T in page PID {
+        if (T matches the query string)
+            display it as a query result
+    }
+    if (no tuples in page PID are results)
+        count it as a false match page
+}
+*/
 void scanAndDisplayMatchingTuples(Query q) //TODO
 {
 	assert(q != NULL);
 	// Start by finding active pages
 	// i is essentially the page id
-	int i = 0;
+	Count i;
 	for (i = 0; i < nPages(q->rel); i++) {
 	    if (bitIsSet(q->pages, i)) {
-	        //Page p = getPage(dataFile(q->rel), i);
-	        //I think now we get the tuple from the page?
+	        Page p = getPage(dataFile(q->rel), i);
+	        //I think now we get the tuple from the page? Yes
+			Count j;
+			Bool match = FALSE;
+			Tuple query = q->qstring;
+			for (j = 0; j < pageNitems(p); i++) {
+				Tuple T = getTupleFromPage(q->rel, p, j);
+				if (tupleMatch(q->rel, T, query)) {
+					showTuple(q->rel, T);
+					match = TRUE;
+				}
+			}
+			if (!match) {
+				q->nfalse++;
+			}
+			/*if (no tuples in page PID are results)
+        		count it as a false match page*/
         }
     }
 }
