@@ -55,6 +55,8 @@ Bits makeTupleSig(Reln r, Tuple t)
 
 // find "matching" pages using tuple signatures
 
+
+// This takes a query as an input --> Does that mean we need a function that converts a query to a tuple?
 void findPagesUsingTupSigs(Query q)
 {
 	assert(q != NULL);
