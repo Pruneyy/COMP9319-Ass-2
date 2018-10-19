@@ -29,8 +29,8 @@ bits codeword(char *attr_value, int m, int k)
 
 Bits codeword(char *attrValue, int m, int k)
 {
+    // This is adapted from the pseudocode provided in the lecture slides by John Shepherd
     int nBits = 0;
-    //It says assuming m < 32 bits, will this always be true?
     Bits cWord = newBits(m);
     srandom(hash_any(attrValue, strlen(attrValue)));
     while (nBits < k) {
@@ -53,21 +53,31 @@ for each attribute A in tuple T {
 */
 Bits makeTupleSig(Reln r, Tuple t) //TODO
 {
-    //printf("make tuple sig\n");
+    //Assert Tuple and Relation are not NULL
 	assert(r != NULL && t != NULL);
+	
+	//Make a new tSig which is a bitString of 0
     Bits tSig = newBits(tsigBits(r));
     unsetAllBits(tSig);
-    //showBits(tSig); printf("\n");
+    
+    //Create a char array to hold each attribute
     char** attrs = tupleVals(r, t);
+    
+    //Iterate through each attribute, creating a codeWord at each one
     Count i;
-    for(i = 0;i < nAttrs(r);i++) {
+    for(i = 0; i < nAttrs(r); i++) {
         Bits cWord = codeword(attrs[i],tsigBits(r),codeBits(r));
         
+        //OR the codeWord with tSig for a "unique" tsig
         orBits(tSig, cWord);
-        /*printf("after attr %d\ncWord\n",i);
-	    showBits(cWord); printf("\n");
+        
+        /*
+        printf("after attr %d\ncWord\n",i);
+	    showBits(cWord); 
+	    printf("\n");
         printf("tSig\n");
-	    showBits(tSig); printf("\n");
+	    showBits(tSig); 
+	    printf("\n");
         */
     }
 	return tSig;
@@ -89,27 +99,57 @@ foreach Tsig in tsigFile {
 */
 void findPagesUsingTupSigs(Query q)//TODO
 {
+    // Assert query is not NULL
 	assert(q != NULL);
-	Bits querySig = makeTupleSig(q->rel,q->qstring); //get query Bits
-    Bits pages = q->pages;                           //get pages Bits, initially all 0
-    Reln r = q->rel;                                 //get query Relation
-	//setAllBits(q->pages); // remove this
-    //set up looping
-    PageID i; //tracks the PageID of the tsig page
-    Page p;     //contains the current tsig page
-    Count whichTsig = 0; //tracks which tsig is currently being checked
-    Count ntsigs;        //tracks which tsig is currently being checked in the page
-    File f = tsigFile(r);//handle of the tsig File
-    Bits matcher = newBits(tsigBits(r)); //empty bits used to store current tsig
+	
+	// Get query Bits
+	Bits querySig = makeTupleSig(q->rel,q->qstring);
+	
+	// Get pages Bits (initialliy all 0)
+    Bits pages = q->pages;
+    
+    // Get query Relation
+    Reln r = q->rel;
+    
+    // Tracks pID of the tSig page
+    PageID i;
+    
+    // Holds current tSig page
+    Page p;
+    
+    // Tracks which tSig is being checked
+    Count whichTsig = 0;
+    
+    // Tracks which tSig is being checked in the page
+    Count ntsigs;
+    
+    // File handler for tSigs
+    File f = tsigFile(r);
+    
+    // Empty bitString to store current tSig
+    Bits matcher = newBits(tsigBits(r));
 
-    for(i = 0;i < nTsigPages(r);i++) {//for all tsig pages in tsig File
-        p = getPage(f, i);     //get next page in file
-        for (ntsigs = 0;ntsigs < pageNitems(p);ntsigs++) { //for all tsig in page
-            getBits(p,ntsigs*tsigBits(r),matcher);      //get next tsig in matcher
-            if (isSubset(querySig,matcher)) {           //if query is a subset/match of matcher
-                setBit(pages,whichTsig/maxTupsPP(r));    //calculate data page id and save to pages
+    // For every tSig page in the tSig File
+    for(i = 0; i < nTsigPages(r); i++) {
+    
+        // Get next page in File
+        p = getPage(f, i);
+        
+        // For all tSigs in current Page
+        for (ntsigs = 0;ntsigs < pageNitems(p);ntsigs++) {
+            
+            // Get next tSig in Matcher
+            getBits(p,ntsigs*tsigBits(r),matcher);
+            
+            // If the query is a subset of the Matcher
+            if (isSubset(querySig,matcher)) {
+                
+                // Save the page ID to pages           
+                setBit(pages,whichTsig/maxTupsPP(r));
             }
-            whichTsig++;    //increment tsig tracker to next tsig
+            
+            // Go to next tSig
+            whichTsig++;
         }
     }
 	// The printf below is primarily for debugging

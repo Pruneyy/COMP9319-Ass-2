@@ -136,22 +136,40 @@ PageID addToRelation(Reln r, Tuple t)
 	putPage(r->dataf, pid, p);
 
 	// compute tuple signature and add to tsigf //TODO
-	PageID pidtsig = rp->tsigNpages - 1; 	//get last page ID
-	Page ptsig = getPage(r->tsigf, pidtsig);//get last page
-	if (pageNitems(ptsig) == rp->tsigPP) { 	//check if last page is full
-		addPage(r->tsigf);					//page full, make new page
+	// Get last page ID
+	PageID pidtsig = rp->tsigNpages - 1;
+	
+	// Get last page
+	Page ptsig = getPage(r->tsigf, pidtsig);
+	
+	// Check if last page is full
+	if (pageNitems(ptsig) == rp->tsigPP) {
+	    
+	    // If the page is full, make a new page
+		addPage(r->tsigf);					
 		rp->tsigNpages++;
 		pidtsig++;
 		free(ptsig);
 		ptsig = newPage();
-		if (ptsig == NULL) return NO_PAGE;
+		if (ptsig == NULL) {
+		    return NO_PAGE;
+	    }
 	}
 	
-	Offset pos = rp->ntsigs % rp->tsigPP; 	//Get offset within page
-	Bits tsig = makeTupleSig(r,t);			//get tsig Bits
-	putBits(ptsig, pos, tsig);				//put tsig in the page
-	rp->ntsigs++;							//update relation
-	putPage(r->tsigf,pidtsig,ptsig);		//update page file
+	// Get offset within page
+	Offset pos = rp->ntsigs % rp->tsigPP;
+	
+	// Get tSig Bits
+	Bits tsig = makeTupleSig(r,t);
+	
+	// Put tSig in the page
+	putBits(ptsig, pos, tsig);
+	
+	// Update relation
+	rp->ntsigs++;
+
+    // Update page file
+	putPage(r->tsigf,pidtsig,ptsig);
 
 	// compute page signature and add to psigf
 
