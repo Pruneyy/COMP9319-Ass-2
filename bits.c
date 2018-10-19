@@ -130,7 +130,7 @@ void orBits(Bits b1, Bits b2)//TODO
 	assert(b1 != NULL && b2 != NULL);
 	assert(b1->nbytes == b2->nbytes);
 	for (i = 0; i < b1->nbits; i++) {
-	    if (!(bitIsSet(b1, i) && bitIsSet(b2, i))) {
+	    if ((bitIsSet(b1, i) || bitIsSet(b2, i))) {
 	        b1->bitstring[i/8] |= (1 << (i%8));
         }
     }

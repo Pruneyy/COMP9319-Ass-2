@@ -135,9 +135,23 @@ PageID addToRelation(Reln r, Tuple t)
 	rp->ntups++;  //written to disk in closeRelation()
 	putPage(r->dataf, pid, p);
 
-	// compute tuple signature and add to tsigf
+	// compute tuple signature and add to tsigf //TODO
+	PageID pidtsig = rp->tsigNpages - 1; 	//get last page ID
+	Page ptsig = getPage(r->tsigf, pidtsig);//get last page
+	if (pageNitems(ptsig) == rp->tsigPP) { 	//check if last page is full
+		addPage(r->tsigf);					//page full, make new page
+		rp->tsigNpages++;
+		pidtsig++;
+		free(ptsig);
+		ptsig = newPage();
+		if (ptsig == NULL) return NO_PAGE;
+	}
 	
-	//TODO
+	Offset pos = rp->ntsigs % rp->tsigPP; 	//Get offset within page
+	Bits tsig = makeTupleSig(r,t);			//get tsig Bits
+	putBits(ptsig, pos, tsig);				//put tsig in the page
+	rp->ntsigs++;							//update relation
+	putPage(r->tsigf,pidtsig,ptsig);		//update page file
 
 	// compute page signature and add to psigf
 

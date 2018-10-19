@@ -52,22 +52,25 @@ int main(int argc, char **argv)
 	printf("b2: "); 
 	showBits(b2); 
 	printf("\n");
-	/*	
-	setBit(b, 5);
-	printf("t=1: "); showBits(b); printf("\n");
-	setBit(b, 0);
-	setBit(b, 40);
-	setBit(b, 59);
-	printf("t=2: "); showBits(b); printf("\n");
-	if (bitIsSet(b,5)) printf("Bit 5 is set\n");
-	if (bitIsSet(b,10)) printf("Bit 10 is set\n");
-	setAllBits(b);
-	printf("t=3: "); showBits(b); printf("\n");
-	unsetBit(b, 40);
-	printf("t=4: "); showBits(b); printf("\n");
-	if (bitIsSet(b,20)) printf("Bit 20 is set\n");
-	if (bitIsSet(b,40)) printf("Bit 40 is set\n");
-	setBit(b, 59);
-	*/
+
+	printf("test Bitwise or\n");
+	printf("Original b:");
+	showBits(b);
+	unsetAllBits(b2);
+	printf("Setting some bits in b2: \n");
+	setBit(b2, 2);
+	setBit(b2, 3);
+	setBit(b2, 4);
+	setBit(b2, 7);
+	setBit(b2, 8);
+	setBit(b2, 13);
+	setBit(b2, 14);
+	setBit(b2, 20);
+	showBits(b2); 
+	printf("\n");
+	orBits(b,b2);
+	printf("orBits(b,b2) b: "); 
+	showBits(b); 
+	printf("\n");
 	return 0;
 }
