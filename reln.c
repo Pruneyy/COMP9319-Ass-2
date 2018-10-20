@@ -244,19 +244,23 @@ PageID addToRelation(Reln r, Tuple t)
 	*/
 	// use page signature to update bit-slices
 	//Bits psigb = makePageSig(r,t);
-	/*
+	
 	Bits slice = newBits(bsigBits(r));
 	Count j;
-	Page pb = getPage(bsigFile(r),pid);
+	Count bspage = 0;
+	Page pb = getPage(bsigFile(r),bspage);
 	for (j = 0;j < psigBits(r);j++) {
-		if (isSet(PPsig,j)) {
-			slice = getBits(pb,j*bsigBits(r),slice);
+		if (j % maxBsigsPP(r) == 0) {
+			putPage(bsigFile(r),j/maxBsigsPP(r),pb);
+			pb = getPage(bsigFile(r),bspage);
+		}
+		if (bitIsSet(PPsig,j)) {
+			getBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);
 			setBit(slice, pid);
-
-
+			putBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);
 		}
 	}
-	*/
+	
 	//TODO
 
 	return nPages(r)-1;
