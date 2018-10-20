@@ -10,13 +10,17 @@
 int main(int argc, char **argv)
 {
 	Reln r = openRelation("R");
+	printf("r = %p\n", r);
 	printf("Tuple: ");
 	Tuple t = readTuple(r, stdin);
 	Bits b = makeTupleSig(r, t);
 	showBits(b); putchar('\n');
+	printf("t = %p\n", t);
 	printf("Query: ");
 	Tuple q = readTuple(r, stdin);
+	printf("q = %p\n", q);
 	Bits bq = makeTupleSig(r, q);
+	printf("bq = %p\n", bq);
 	showBits(bq); putchar('\n');
 	if (isSubset(bq,b))
 		printf("Matches\n");
