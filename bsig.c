@@ -7,6 +7,16 @@
 #include "query.h"
 #include "bsig.h"
 
+/*
+Qsig = makePageSig(Query)
+Pages = AllOneBits
+for each i in 0..pm-1 {
+    if (Psig bit[i] is 1) {
+        Slice = get i'th bit slice from bsigFile
+        zero bits in Pages which are zero in Slice
+    }
+}
+*/
 void findPagesUsingBitSlices(Query q)
 {
 	assert(q != NULL);

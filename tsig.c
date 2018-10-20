@@ -71,14 +71,6 @@ Bits makeTupleSig(Reln r, Tuple t) //TODO
         //OR the codeWord with tSig for a "unique" tsig
         orBits(tSig, cWord);
         
-        /*
-        printf("after attr %d\ncWord\n",i);
-	    showBits(cWord); 
-	    printf("\n");
-        printf("tSig\n");
-	    showBits(tSig); 
-	    printf("\n");
-        */
     }
 	return tSig;
 }

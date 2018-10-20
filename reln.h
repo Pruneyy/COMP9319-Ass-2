@@ -16,9 +16,9 @@ typedef struct _RelnParams {
 	Count  ntups;      // number of tuples
 	Count  tsigNpages; // number of tsig pages
 	Count  ntsigs;     // number of tuple signatures (tsigs)
-	Count  psigNpages; // number of tsig pages
+	Count  psigNpages; // number of psig pages
 	Count  npsigs;     // number of page signatures (psigs)
-	Count  bsigNpages; // number of tsig pages
+	Count  bsigNpages; // number of bsig pages
 	Count  nbsigs;     // number of bit-sliced sigs (bsigs)
     // fixed parameters (set at relation creation time)
 	Count  nattrs;     // number of attributes

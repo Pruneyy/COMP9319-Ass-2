@@ -44,18 +44,6 @@ Bits makePageSig(Reln r, Tuple t) //TODO
     Bits pSig = newBits(psigBits(r));
     unsetAllBits(pSig);
     
-    // File handler for tSigs
-    File f = tsigFile(r);
-
-    // Get last page signature page
-    Page p = getPage(f, nPsigPages(r) - 1);  
-    
-    // Offset to find the last signature
-	Offset pos = nPsigs(r) % maxPsigsPP(r);
-    
-    // Get last signature in last page signature
-    getBits(p, pos, pSig);
-    
     //Create a char array to hold each attribute
     char** attrs = tupleVals(r, t);
     
@@ -81,17 +69,10 @@ foreach Psig in psigFile {
     }
 }
 */
-// I THINK THIS PSEUDOCODE IS FOR THE RELN.C FILE
-/*
-new Tuple is inserted into page PID
-Psig = makePageSig(Tuple)
-PPsig = fetch page signature for data page PID from psigFile
-merge Psig and PPsig giving a new PPsig
-update page signature for data page PID in psigFile
-*/
+
 void findPagesUsingPageSigs(Query q) //TODO
 {
-/*
+
 	assert(q != NULL);
 	
     // Get query Relation
@@ -101,16 +82,51 @@ void findPagesUsingPageSigs(Query q) //TODO
 	Bits querySig = makePageSig(q->rel,q->qstring);
 	
     // Empty bitString to store Page
-    Bits pages = newBits(psigBits(r));
+    Bits pages = q->pages;
     
+    // Tracks pID of the pSig page
+    PageID i;
+    
+    // Holds current pSig page
+    Page p;
+    
+    // Tracks which pSig is being checked
+    Count whichPsig = 0;
+    
+    // Tracks which pSig is being checked in the page
+    Count npsigs;
+
     // File handler for pSigs
     File f = psigFile(r);
     
+    // Empty bitString to store current pSig
+    Bits matcher = newBits(psigBits(r));
+
     // For every pSig in the pSig File
-    Count i;
     for(i = 0; i < nPsigPages(r); i++) {
+        // Get next page in File
+        p = getPage(f, i);
+        
+        // For all pSigs in current Page
+        for (npsigs = 0;npsigs < pageNitems(p);npsigs++) {
+            
+            // Get next pSig in Matcher
+            getBits(p,npsigs*psigBits(r),matcher);
+            
+            // If the query is a subset of the Matcher
+            if (isSubset(querySig,matcher)) {
+                
+                // Save the page ID to pages           
+                setBit(pages,whichPsig);
+            }
+            
+            // Go to next pSig
+            whichPsig++;
+        }
     }
-*/  
-	//setAllBits(q->pages); // remove this
+ 
+    // The printf below is primarily for debugging
+	// Remove it before submitting this function
+	printf("Matched Pages:"); showBits(q->pages); putchar('\n');
 }
 

@@ -12,6 +12,7 @@
 #include "tsig.h"
 #include "bits.h"
 #include "hash.h"
+#include "psig.h"
 // open a file with a specified suffix
 // - always open for both reading and writing
 
@@ -171,12 +172,91 @@ PageID addToRelation(Reln r, Tuple t)
     // Update page file
 	putPage(r->tsigf,pidtsig,ptsig);
 
-	// compute page signature and add to psigf
 
+
+	/*
+	new Tuple is inserted into page PID
+		Psig = makePageSig(Tuple)
+	PPsig = fetch page signature for data page PID from psigFile
+	merge Psig and PPsig giving a new PPsig
+	update page signature for data page PID in psigFile
+	*/
+	// Compute page signature of tuple
+	Bits psig = makePageSig(r,t);
+
+	// Get last page ID
+	PageID pidpsig = rp->psigNpages - 1;
+
+	// File handler for tSigs
+    File f = psigFile(r);
+
+    // Get last signature page
+    Page pp = getPage(f, pidpsig);
+    
+	// Offset to find the last signature
+	Offset ppos = pid % maxPsigsPP(r);
+
+	// Check if data page pid is on last page
+	if (nPsigs(r) < pid) {
+	    
+	    // If the pid is larger than number of psigs, insert new psig
+		// If psig page is full, make new page
+		if (pageNitems(pp) == maxPsigsPP(r)) {
+			addPage(r->psigf);
+			rp->psigNpages++;
+			pidpsig++;
+			free(pp);
+			pp = newPage();
+			if (pp == NULL) {
+				return NO_PAGE;
+			}
+		}
+		Bits blankpsig = newBits(psigBits(r));
+		putBits(pp, ppos, blankpsig);
+	}
+	
+    // Get last signature in last page signature
+	Bits PPsig = newBits(psigBits(r));
+    getBits(pp, ppos, PPsig);
+
+	//bit-wise OR the old and new page signatures
+	orBits(PPsig, psig);
+
+	// Put pSig in the page
+	putBits(pp, ppos, PPsig);
+	
+    // Update page file
+	putPage(r->psigf,pidpsig,pp);
 	//TODO
 
-	// use page signature to update bit-slices
 
+
+	/*
+	PID = data page where new Tuple inserted
+	Psig = makePageSig(Tuple)
+	for each i in  0..pm-1 {
+		if (Psig bit[i] is 1) {
+			Slice = get i'th bit slice from bsigFile
+			set the PID'th bit in Slice
+			write updated Slice back to bsigFile
+		}
+	}
+	*/
+	// use page signature to update bit-slices
+	//Bits psigb = makePageSig(r,t);
+	/*
+	Bits slice = newBits(bsigBits(r));
+	Count j;
+	Page pb = getPage(bsigFile(r),pid);
+	for (j = 0;j < psigBits(r);j++) {
+		if (isSet(PPsig,j)) {
+			slice = getBits(pb,j*bsigBits(r),slice);
+			setBit(slice, pid);
+
+
+		}
+	}
+	*/
 	//TODO
 
 	return nPages(r)-1;
