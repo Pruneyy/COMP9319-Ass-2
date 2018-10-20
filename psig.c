@@ -22,6 +22,8 @@ Bits makePageSig(Reln r, Tuple t) //TODO
 	
 	//Make a new pSig which is a bitString of 0
     Bits pSig = newBits(psigBits(r));
+    // or should this be:
+    // Bits pSig = newBits(psigBits(r*t));
     unsetAllBits(pSig);
     
     // File handler for tSigs
