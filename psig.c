@@ -74,6 +74,18 @@ void findPagesUsingPageSigs(Query q) //TODO
 	
 	// Get query Bits
 	Bits querySig = makePageSig(q->rel,q->qstring);
+	
+    // Empty bitString to store Page
+    Bits pages = newBits(psigBits(r));
+    
+    // File handler for pSigs
+    File f = psigFile(r);
+    
+    // For every pSig in the pSig File
+    Count i;
+    for(i = 0; i < nPsigPages(r); i++) {
+    
+    
 	//setAllBits(q->pages); // remove this
 }
 
