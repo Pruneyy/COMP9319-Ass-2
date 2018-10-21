@@ -91,7 +91,6 @@ void setAllBits(Bits b)//TODO
 void unsetBit(Bits b, int position)//TODO
 {
 	assert(b != NULL);
-	//printf("nbits = %d\n",b->nbits);
 	assert(0 <= position && position < b->nbits);
 	b->bitstring[position/8] &= ~(1 << (position%8));
 }
@@ -170,7 +169,6 @@ void putBits(Page p, Offset pos, Bits b) //TODO
 void showBits(Bits b)
 {
 	assert(b != NULL);
-    //printf("(%d,%d)",b->nbits,b->nbytes);
 	for (int i = b->nbytes-1; i >= 0; i--) {
 		for (int j = 7; j >= 0; j--) {
 			Byte mask = (1 << j);

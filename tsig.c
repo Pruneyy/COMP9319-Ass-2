@@ -135,8 +135,6 @@ void findPagesUsingTupSigs(Query q)//TODO
             getBits(p,ntsigs,matcher);
 
             q->nsigs++;
-            //showBits(matcher); printf("\n");
-	        //printf("got got\n");
             // If the query is a subset of the Matcher
             if (isSubset(querySig,matcher)) {
                 
@@ -148,8 +146,4 @@ void findPagesUsingTupSigs(Query q)//TODO
             whichTsig++;
         }
     }
-	// The printf below is primarily for debugging
-	// Remove it before submitting this function
-
-	//printf("Matched Pages:"); showBits(q->pages); putchar('\n');
 }

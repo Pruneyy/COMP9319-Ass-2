@@ -67,14 +67,11 @@ foreach PID in 0 .. npages-1 {
 void scanAndDisplayMatchingTuples(Query q) //TODO
 {
 	assert(q != NULL);
-	// Start by finding active pages
-	// i is essentially the page id
 	Count i;
 	for (i = 0; i < nPages(q->rel); i++) {
 	    if (bitIsSet(q->pages, i)) {
 	        Page p = getPage(dataFile(q->rel), i);
 			q->ntuppages++;
-	        //I think now we get the tuple from the page? Yes
 			Count j;
 			Bool match = FALSE;
 			Tuple query = q->qstring;

@@ -255,7 +255,6 @@ PageID addToRelation(Reln r, Tuple t)
 	PageID bspage = 0;	//tracks bit-slice page id
 	Page pb = getPage(bsigFile(r),bspage);	//get initial page
 	for (j = 0;j < psigBits(r);j++) {	//for all bits in page sig
-		//printf("j = %d\n",j);
 		/*if (j % maxBsigsPP(r) == 0) {	//if bit index is a multiple of max bit sigs per page, get the next bit sig page
 			putPage(bsigFile(r),j/maxBsigsPP(r),pb); //save previous page
 			pb = getPage(bsigFile(r),bspage);	//get next page
@@ -266,13 +265,10 @@ PageID addToRelation(Reln r, Tuple t)
 			unsetAllBits(slice);
 			getBits(pb,j,slice);	//get bit slice corresponding to page sig bit position index
 			setBit(slice, pid);		//set the slice bit at the data page id of the inserted tuple
-			//showBits(slice); printf(" pid: %d j:%d\n",pid,j);
 			putBits(pb,j,slice);	//save the slice to the page
 		}
 	}
 	putPage(bsigFile(r),0,pb);
-	//TODO
-	//printf("page sigs per page = %d\n",maxPsigsPP(r));
 	return nPages(r)-1;
 }
 

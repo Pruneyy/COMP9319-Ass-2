@@ -3,7 +3,7 @@
 CC=gcc
 CFLAGS=-std=gnu99 -Wall -Werror -g
 LIBS=query.o page.o reln.o tuple.o util.o tsig.o psig.o bsig.o hash.o bits.o
-BINS=create insert select stats gendata dump x1 x2 x3 x4
+BINS=create insert select stats gendata dump
 
 all : $(LIBS) $(BINS)
 
@@ -35,20 +35,6 @@ tuple.o: tuple.c defs.h tuple.h reln.h hash.h bits.h
 util.o: util.c
 
 defs.h: util.h
-
-x1 : x1.o bits.o page.o
-	$(CC) -o x1 x1.o $(LIBS)
-
-x2 : x2.o reln.o page.o tuple.o tsig.o bits.o hash.o query.o
-	$(CC) -o x2 x2.o $(LIBS)
-
-x3 : x3.o reln.o page.o tuple.o tsig.o bits.o hash.o
-	$(CC) -o x3 x3.o $(LIBS)
-
-
-x4 : x4.o reln.o page.o tuple.o psig.o bits.o hash.o
-	$(CC) -o x4 x4.o $(LIBS)
-
 
 db:
 	rm -f R.*

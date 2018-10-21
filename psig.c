@@ -126,9 +126,5 @@ void findPagesUsingPageSigs(Query q) //TODO
             whichPsig++;
         }
     }
- 
-    // The printf below is primarily for debugging
-	// Remove it before submitting this function
-	//printf("Matched Pages:"); showBits(q->pages); putchar('\n');
 }
 
