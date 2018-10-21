@@ -31,20 +31,21 @@ void findPagesUsingBitSlices(Query q) //TODO
     Bits pages = q->pages;
     setAllBits(pages);
     
-    Bits slice = newBits(bsigBits(r));
-	Count j;
-	Count bspage = 0;
-    Count bitnum;
-	Page pb = getPage(bsigFile(r),bspage);
-	for (j = 0;j < psigBits(r);j++) {
-		if (j % maxBsigsPP(r) == 0) {
-			pb = getPage(bsigFile(r),bspage);
+    Bits slice = newBits(bsigBits(r)); //get new slice
+	Count j;		//bit index of page signature
+	Count bspage = 0;	//bit slice page
+    Count bitnum;	//bit index of slice
+	Page pb = getPage(bsigFile(r),bspage); //get initial bit slice page
+	for (j = 0;j < psigBits(r);j++) {	//for each bit in page signature
+		if (j % maxBsigsPP(r) == 0) {	//if bit index is multiple of max bit slice per page, get next page
+			pb = getPage(bsigFile(r),bspage);	//get next page
+			bspage++;	//increment pageID to next page
 		}
-		if (bitIsSet(querySig,j)) {
-			getBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);
-            for (bitnum = 0;bitnum < bsigBits(r);bitnum++) {
-                if (!bitIsSet(slice,bitnum)) {
-                    unsetBit(pages, bitnum);
+		if (bitIsSet(querySig,j)) {	//if j'th bit in page sig is set
+			getBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);	//get the j'th slice
+            for (bitnum = 0;bitnum < bsigBits(r);bitnum++) {	//for each bit in the slice
+                if (!bitIsSet(slice,bitnum)) {					//if bit in slice is not set
+                    unsetBit(pages, bitnum);					//unset the bit in pages
                 }
             }
 		}

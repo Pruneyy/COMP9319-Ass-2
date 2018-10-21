@@ -243,21 +243,22 @@ PageID addToRelation(Reln r, Tuple t)
 	}
 	*/
 	// use page signature to update bit-slices
-	//Bits psigb = makePageSig(r,t);
-	
-	Bits slice = newBits(bsigBits(r));
-	Count j;
-	Count bspage = 0;
-	Page pb = getPage(bsigFile(r),bspage);
-	for (j = 0;j < psigBits(r);j++) {
-		if (j % maxBsigsPP(r) == 0) {
-			putPage(bsigFile(r),j/maxBsigsPP(r),pb);
-			pb = getPage(bsigFile(r),bspage);
+	Bits slice = newBits(bsigBits(r));	//make empty slice
+	Count j;	//tracks bit position of page sig
+	PageID bspage = 0;	//tracks bit-slice page id
+	Page pb = getPage(bsigFile(r),bspage);	//get initial page
+	for (j = 0;j < psigBits(r);j++) {	//for all bits in page sig
+		
+		if (j % maxBsigsPP(r) == 0) {	//if bit index is a multiple of max bit sigs per page, get the next bit sig page
+			putPage(bsigFile(r),j/maxBsigsPP(r),pb); //save previous page
+			pb = getPage(bsigFile(r),bspage);	//get next page
+			bspage++;	//increment PageID to next page
 		}
-		if (bitIsSet(PPsig,j)) {
-			getBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);
-			setBit(slice, pid);
-			putBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);
+
+		if (bitIsSet(PPsig,j)) {	//if bit in page sig is set
+			getBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);	//get bit slice corresponding to page sig bit position index
+			setBit(slice, pid);		//set the slice bit at the data page id of the inserted tuple
+			putBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);	//save the slice to the page
 		}
 	}
 	

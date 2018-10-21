@@ -1,4 +1,4 @@
-// test psig/bits data types
+// test bsig/bits data types
 
 #include <stdio.h>
 #include "defs.h"
@@ -6,6 +6,7 @@
 #include "tuple.h"
 #include "psig.h"
 #include "bits.h"
+#include "bsig.h"
 
 int main(int argc, char **argv)
 {
@@ -15,11 +16,13 @@ int main(int argc, char **argv)
 	Tuple t = readTuple(r, stdin);
 	Bits b = makePageSig(r, t);
 	showBits(b); putchar('\n');
+
 	printf("t = %p\n", t);
 	printf("Query: ");
 	Tuple q = readTuple(r, stdin);
 	printf("q = %p\n", q);
 	Bits bq = makePageSig(r, q);
+	
 	printf("bq = %p\n", bq);
 	showBits(bq); putchar('\n');
 	if (isSubset(bq,b))
