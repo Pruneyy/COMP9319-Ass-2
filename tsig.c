@@ -32,12 +32,14 @@ Bits codeword(char *attrValue, int m, int k)
     // This is adapted from the pseudocode provided in the lecture slides by John Shepherd
     int nBits = 0;
     Bits cWord = newBits(m);
-    srandom(hash_any(attrValue, strlen(attrValue)));
-    while (nBits < k) {
-        int i = random() % m;
-        if (!bitIsSet(cWord, i)) {
-            setBit(cWord, i);
-            nBits++;
+    if (strcmp(attrValue,"?") != 0) {
+        srandom(hash_any(attrValue, strlen(attrValue)));
+        while (nBits < k) {
+            int i = random() % m;
+            if (!bitIsSet(cWord, i)) {
+                setBit(cWord, i);
+                nBits++;
+            }
         }
     }
     return cWord;
@@ -93,10 +95,8 @@ void findPagesUsingTupSigs(Query q)//TODO
 {
     // Assert query is not NULL
 	assert(q != NULL);
-	
 	// Get query Bits
 	Bits querySig = makeTupleSig(q->rel,q->qstring);
-	
 	// Get pages Bits (initialliy all 0)
     Bits pages = q->pages;
     
@@ -127,16 +127,20 @@ void findPagesUsingTupSigs(Query q)//TODO
         // Get next page in File
         p = getPage(f, i);
         
+        q->nsigpages++;
         // For all tSigs in current Page
         for (ntsigs = 0;ntsigs < pageNitems(p);ntsigs++) {
             
             // Get next tSig in Matcher
-            getBits(p,ntsigs*tsigBits(r),matcher);
-            
+            getBits(p,ntsigs,matcher);
+
+            q->nsigs++;
+            //showBits(matcher); printf("\n");
+	        //printf("got got\n");
             // If the query is a subset of the Matcher
             if (isSubset(querySig,matcher)) {
                 
-                // Save the page ID to pages           
+                // Save the page ID to pages    
                 setBit(pages,whichTsig/maxTupsPP(r));
             }
             
@@ -146,5 +150,6 @@ void findPagesUsingTupSigs(Query q)//TODO
     }
 	// The printf below is primarily for debugging
 	// Remove it before submitting this function
+
 	printf("Matched Pages:"); showBits(q->pages); putchar('\n');
 }

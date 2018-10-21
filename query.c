@@ -73,16 +73,18 @@ void scanAndDisplayMatchingTuples(Query q) //TODO
 	for (i = 0; i < nPages(q->rel); i++) {
 	    if (bitIsSet(q->pages, i)) {
 	        Page p = getPage(dataFile(q->rel), i);
+			q->ntuppages++;
 	        //I think now we get the tuple from the page? Yes
 			Count j;
 			Bool match = FALSE;
 			Tuple query = q->qstring;
-			for (j = 0; j < pageNitems(p); i++) {
+			for (j = 0; j < pageNitems(p); j++) {
 				Tuple T = getTupleFromPage(q->rel, p, j);
 				if (tupleMatch(q->rel, T, query)) {
 					showTuple(q->rel, T);
 					match = TRUE;
 				}
+				q->ntuples++;
 			}
 			if (!match) {
 				q->nfalse++;

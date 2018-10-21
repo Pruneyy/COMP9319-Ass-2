@@ -13,12 +13,14 @@ Bits pagecodeword(char *attrValue, int m, int k)
     // This is adapted from the pseudocode provided in the lecture slides by John Shepherd
     int nBits = 0;
     Bits cWord = newBits(m);
-    srandom(hash_any(attrValue, strlen(attrValue)));
-    while (nBits < k) {
-        int i = random() % m;
-        if (!bitIsSet(cWord, i)) {
-            setBit(cWord, i);
-            nBits++;
+    if (strcmp(attrValue,"?") != 0) {
+        srandom(hash_any(attrValue, strlen(attrValue)));
+        while (nBits < k) {
+            int i = random() % m;
+            if (!bitIsSet(cWord, i)) {
+                setBit(cWord, i);
+                nBits++;
+            }
         }
     }
     return cWord;
@@ -106,13 +108,13 @@ void findPagesUsingPageSigs(Query q) //TODO
     for(i = 0; i < nPsigPages(r); i++) {
         // Get next page in File
         p = getPage(f, i);
-        
+        q->nsigpages++;
         // For all pSigs in current Page
         for (npsigs = 0;npsigs < pageNitems(p);npsigs++) {
             
             // Get next pSig in Matcher
             getBits(p,npsigs*psigBits(r),matcher);
-            
+            q->nsigs++;
             // If the query is a subset of the Matcher
             if (isSubset(querySig,matcher)) {
                 

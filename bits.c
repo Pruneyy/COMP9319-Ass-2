@@ -91,6 +91,7 @@ void setAllBits(Bits b)//TODO
 void unsetBit(Bits b, int position)//TODO
 {
 	assert(b != NULL);
+	//printf("nbits = %d\n",b->nbits);
 	assert(0 <= position && position < b->nbits);
 	b->bitstring[position/8] &= ~(1 << (position%8));
 }

@@ -56,7 +56,7 @@ Status newRelation(char *name, Count nattrs, float pF,
 	addPage(r->dataf); p->npages = 1; p->ntups = 0;
 	addPage(r->tsigf); p->tsigNpages = 1; p->ntsigs = 0;
 	addPage(r->psigf); p->psigNpages = 1; p->npsigs = 0;
-	addPage(r->bsigf); p->bsigNpages = 1; p->nbsigs = 0; // replace this
+	addPage(r->bsigf); p->bsigNpages = 1; p->nbsigs = p->pm; // replace this
 	// Create a file containing "pm" all-zeroes bit-strings,
     // each of which has length "bm" bits
 	//TODO
@@ -119,7 +119,6 @@ PageID addToRelation(Reln r, Tuple t)
 	assert(r != NULL && t != NULL && strlen(t) == tupSize(r));
 	Page p;  PageID pid;
 	RelnParams *rp = &(r->params);
-	
 	// add tuple to last page
 	pid = rp->npages-1;
 	p = getPage(r->dataf, pid);
@@ -137,6 +136,7 @@ PageID addToRelation(Reln r, Tuple t)
 	putPage(r->dataf, pid, p);
 
 	// compute tuple signature and add to tsigf //TODO
+
 	// Get last page ID
 	PageID pidtsig = rp->tsigNpages - 1;
 	
@@ -169,6 +169,9 @@ PageID addToRelation(Reln r, Tuple t)
 	// Update relation
 	rp->ntsigs++;
 
+	// Update page with number of tuple sigs
+	addOneItem(ptsig);
+
     // Update page file
 	putPage(r->tsigf,pidtsig,ptsig);
 
@@ -195,9 +198,8 @@ PageID addToRelation(Reln r, Tuple t)
     
 	// Offset to find the last signature
 	Offset ppos = pid % maxPsigsPP(r);
-
 	// Check if data page pid is on last page
-	if (nPsigs(r) < pid) {
+	if (nPsigs(r) < pid + 1) {
 	    
 	    // If the pid is larger than number of psigs, insert new psig
 		// If psig page is full, make new page
@@ -212,7 +214,11 @@ PageID addToRelation(Reln r, Tuple t)
 			}
 		}
 		Bits blankpsig = newBits(psigBits(r));
+		rp->npsigs++;
 		putBits(pp, ppos, blankpsig);
+
+		// Update page with number of page sigs
+		addOneItem(pp);
 	}
 	
     // Get last signature in last page signature
@@ -243,27 +249,30 @@ PageID addToRelation(Reln r, Tuple t)
 	}
 	*/
 	// use page signature to update bit-slices
+
 	Bits slice = newBits(bsigBits(r));	//make empty slice
 	Count j;	//tracks bit position of page sig
 	PageID bspage = 0;	//tracks bit-slice page id
 	Page pb = getPage(bsigFile(r),bspage);	//get initial page
 	for (j = 0;j < psigBits(r);j++) {	//for all bits in page sig
-		
-		if (j % maxBsigsPP(r) == 0) {	//if bit index is a multiple of max bit sigs per page, get the next bit sig page
+		//printf("j = %d\n",j);
+		/*if (j % maxBsigsPP(r) == 0) {	//if bit index is a multiple of max bit sigs per page, get the next bit sig page
 			putPage(bsigFile(r),j/maxBsigsPP(r),pb); //save previous page
 			pb = getPage(bsigFile(r),bspage);	//get next page
 			bspage++;	//increment PageID to next page
 		}
-
+		*/
 		if (bitIsSet(PPsig,j)) {	//if bit in page sig is set
-			getBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);	//get bit slice corresponding to page sig bit position index
+			unsetAllBits(slice);
+			getBits(pb,j,slice);	//get bit slice corresponding to page sig bit position index
 			setBit(slice, pid);		//set the slice bit at the data page id of the inserted tuple
-			putBits(pb,(j%maxBsigsPP(r))*bsigBits(r),slice);	//save the slice to the page
+			showBits(slice); printf(" pid: %d j:%d\n",pid,j);
+			putBits(pb,j,slice);	//save the slice to the page
 		}
 	}
-	
+	putPage(bsigFile(r),0,pb);
 	//TODO
-
+	//printf("page sigs per page = %d\n",maxPsigsPP(r));
 	return nPages(r)-1;
 }
 
