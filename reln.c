@@ -266,7 +266,7 @@ PageID addToRelation(Reln r, Tuple t)
 			unsetAllBits(slice);
 			getBits(pb,j,slice);	//get bit slice corresponding to page sig bit position index
 			setBit(slice, pid);		//set the slice bit at the data page id of the inserted tuple
-			showBits(slice); printf(" pid: %d j:%d\n",pid,j);
+			//showBits(slice); printf(" pid: %d j:%d\n",pid,j);
 			putBits(pb,j,slice);	//save the slice to the page
 		}
 	}

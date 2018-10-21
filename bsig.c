@@ -30,7 +30,7 @@ void findPagesUsingBitSlices(Query q) //TODO
     // Full bitString to store Page
     Bits pages = q->pages;
     setAllBits(pages);
-	showBits(pages); printf("\n");
+	//showBits(pages); printf("\n");
     
     Bits slice = newBits(bsigBits(r)); //get new slice
 	Count j;		//bit index of page signature
@@ -38,7 +38,7 @@ void findPagesUsingBitSlices(Query q) //TODO
     Count bitnum;	//bit index of slice
 	Page pb = getPage(bsigFile(r),bspage); //get initial bit slice page
 	q->nsigpages++;
-	printf("sig pages = %d\n",q->nsigpages);
+	//printf("sig pages = %d\n",q->nsigpages);
 	for (j = 0;j < psigBits(r);j++) {	//for each bit in page signature
 		/*if (j % maxBsigsPP(r) == 0) {	//if bit index is multiple of max bit slice per page, get next page
 			pb = getPage(bsigFile(r),bspage);	//get next page
@@ -47,10 +47,10 @@ void findPagesUsingBitSlices(Query q) //TODO
 		}*/
 		if (bitIsSet(querySig,j)) {	//if j'th bit in page sig is set
 			getBits(pb,j,slice);	//get the j'th slice
-			printf("j:%d  ",j); showBits(slice); printf("\n");
+			//printf("j:%d  ",j); showBits(slice); printf("\n");
 			q->nsigs++;
             for (bitnum = 0;bitnum < nPages(r);bitnum++) {	//for each bit in the slice
-                printf("bitnum = %d\n",bitnum);
+                //printf("bitnum = %d\n",bitnum);
 				if (!bitIsSet(slice,bitnum)) {					//if bit in slice is not set
                     unsetBit(pages, bitnum);					//unset the bit in pages
                 }
@@ -59,6 +59,6 @@ void findPagesUsingBitSlices(Query q) //TODO
 	}
     // The printf below is primarily for debugging
 	// Remove it before submitting this function
-	printf("Matched Pages:"); showBits(q->pages); putchar('\n');
+	//printf("Matched Pages:"); showBits(q->pages); putchar('\n');
 }
 
